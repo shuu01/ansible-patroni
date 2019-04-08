@@ -1,0 +1,10 @@
+---
+# defaults file for patroni
+
+# patroni settings
+patroni_pg_port: 5432
+patroni_archive_command: "mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
+patroni_scope: cluster
+
+patroni_rest_username: patroni-username
+patroni_rest_password: patroni-password

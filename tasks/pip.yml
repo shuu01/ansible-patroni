@@ -1,0 +1,31 @@
+---
+- name: pip | install
+  apt:
+    name: "{{ item }}"
+    state: latest
+    install_recommends: no
+  loop:
+    - python-pip
+    - python-setuptools
+    - build-essential
+    - python-dev
+  tags: pip
+
+- name: pip | install patroni dependencies
+  pip:
+    name: "{{ item }}"
+  loop:
+    - python-etcd
+    - wheel
+    #- dnspython
+    #- boto
+    #- mock
+    #- requests
+    #- six
+    #- kazoo
+    #- click
+    #- tzlocal
+    #- prettytable
+    #- PyYAML
+    #- python-dateutil
+  tags: pip
