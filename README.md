@@ -6,8 +6,8 @@ patroni install and configure
 Requirements
 ------------
 
-postgresql
-etcd
+- postgresql
+- etcd
 
 Role Variables
 --------------
@@ -21,8 +21,8 @@ Role Variables
 Dependencies
 ------------
 
-postgresql
-etcd
+- postgresql
+- etcd
 
 Example Playbook
 ----------------
