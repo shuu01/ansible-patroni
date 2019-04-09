@@ -8,3 +8,12 @@ patroni_scope: cluster
 
 patroni_rest_username: patroni-username
 patroni_rest_password: patroni-password
+
+# postgresql settings (override it with group_vars or host_vars if needed)
+postgresql_version: 11
+
+postgresql_bin: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
+postgresql_data: "/var/lib/postgresql/{{ postgresql_version }}/data"
+
+postgresql_superuser_password: superuser-password
+postgresql_replicator_password: "{{ postgresql_replicator_password }}"

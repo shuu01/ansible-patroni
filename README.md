@@ -18,6 +18,14 @@ Role Variables
 - patroni_rest_username: username for rest api
 - patroni_rest_password: password for rest api
 
+- postgresql_version: installed postgresql version
+
+- postgresql_bin: path to postgresql binary directory
+- postgresql_data: path to postgresql data directory
+
+- postgresql_superuser_password: postgresql superuser password
+- postgresql_replicator_password: postgresql replicator password
+
 Dependencies
 ------------
 
