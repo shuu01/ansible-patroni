@@ -1,12 +1,11 @@
-Role Name
+Ansible: patroni
 =========
 
-patroni install and configure
+Install and configure patroni-postgresql cluster
 
 Requirements
 ------------
 
-- postgresql
 - etcd
 
 Role Variables
@@ -19,17 +18,17 @@ Role Variables
 - patroni_rest_password: password for rest api
 
 - postgresql_version: installed postgresql version
-
 - postgresql_bin: path to postgresql binary directory
 - postgresql_data: path to postgresql data directory
-
 - postgresql_superuser_password: postgresql superuser password
 - postgresql_replicator_password: postgresql replicator password
+
+- etcd_host: host address for the etcd endpoint
+- etcd_port: port address for the etcd endpoint
 
 Dependencies
 ------------
 
-- postgresql
 - etcd
 
 Example Playbook

@@ -1,7 +1,7 @@
 ---
 # defaults file for patroni
 
-# patroni settings
+# patroni variables
 patroni_pg_port: 5432
 patroni_archive_command: "mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
 patroni_scope: cluster
@@ -9,11 +9,19 @@ patroni_scope: cluster
 patroni_rest_username: patroni-username
 patroni_rest_password: patroni-password
 
-# postgresql settings (override it with group_vars or host_vars if needed)
+# postgresql variables (override it with group_vars or host_vars if needed)
 postgresql_version: 11
+
+postgresql_apt_key_id: "ACCC4CF8"
+postgresql_apt_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+postgresql_apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
 
 postgresql_bin: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
 postgresql_data: "/var/lib/postgresql/{{ postgresql_version }}/data"
 
 postgresql_superuser_password: superuser-password
-postgresql_replicator_password: "{{ postgresql_replicator_password }}"
+postgresql_replicator_password: "{{ postgresql_superuser_password }}"
+
+# etcd variables
+etcd_host: 127.0.0.1
+etcd_port: 2379

@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
-  remote_user: root
+- hosts: patroni
+  become: yes
   roles:
-    - patroni
+    - { role: ../ansi-patroni }

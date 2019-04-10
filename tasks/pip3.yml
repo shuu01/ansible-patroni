@@ -1,18 +1,18 @@
 ---
-- name: pip | install
+- name: pip3 | install
   apt:
     name: "{{ item }}"
     state: latest
     install_recommends: no
   loop:
-    - python-pip
-    - python-setuptools
+    - python3-pip
+    - python3-setuptools
     - build-essential
-    - python-dev
+    - python3-dev
     - libpq-dev
   tags: pip
 
-- name: pip | install patroni dependencies
+- name: pip3 | install patroni dependencies
   pip:
     name: "{{ item }}"
   loop:

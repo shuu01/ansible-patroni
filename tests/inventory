@@ -1,2 +1,23 @@
-localhost
-
+all:
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  hosts:
+    u1.lxc:
+      ansible_host: 10.0.3.10
+    u2.lxc:
+      ansible_host: 10.0.3.20
+    u3.lxc:
+      ansible_host: 10.0.3.30
+  children:
+    patroni:
+      hosts:
+        u1.lxc:
+          patroni_node_name: node01
+        u2.lxc:
+          patroni_node_name: node02
+        u3.lxc:
+          patroni_node_name: node03
+      vars:
+        ansible_user: ubuntu
+        ansible_become_pass: ubuntu
+        ansible_ssh_pass: ubuntu

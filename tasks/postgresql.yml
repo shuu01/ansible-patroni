@@ -1,0 +1,48 @@
+---
+- name: postgresql | ca-certificates
+  apt:
+    name:
+      - ca-certificates
+    state: present
+  tags: postgresql
+
+- name: postgresql | add apt-key
+  apt_key:
+    id: "{{ postgresql_apt_key_id }}"
+    url: "{{ postgresql_apt_key_url }}"
+    state: present
+  when: postgresql_apt_key_url and postgresql_apt_key_id
+  tags: postgresql
+
+- name: postgresql | add apt
+  apt_repository:
+    repo: "{{ postgresql_apt_repository }}"
+    state: present
+  when: postgresql_apt_repository is defined
+  tags: postgresql
+
+- name: postgresql | install
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - "postgresql-{{postgresql_version}}"
+    - "postgresql-client-{{postgresql_version}}"
+    - "postgresql-contrib-{{postgresql_version}}"
+    - python-psycopg2
+    - repmgr
+  tags: postgresql
+
+- name: postgresql | stop service
+  systemd:
+    name: postgresql
+    state: stopped
+    enabled: no
+  tags: postgresql
+
+- name: postgresql | remove data directory
+  file:
+    state: absent
+    path: "{{ postgresql_data }}"
+  tags: postgresql

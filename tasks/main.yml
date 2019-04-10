@@ -1,7 +1,12 @@
 ---
-# tasks file for patroni
 
 - import_tasks: pip.yml
+  when: ansible_python_interpreter == "/usr/bin/python"
+
+- import_tasks: pip3.yml
+  when: ansible_python_interpreter == "/usr/bin/python3"
+
+- import_tasks: postgresql.yml
 
 - name: patroni | suggested packages install
   apt:

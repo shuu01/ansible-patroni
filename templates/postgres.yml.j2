@@ -5,11 +5,7 @@ scope: &scope {{ patroni_scope }}
 
 etcd:
   scope: *scope
-  host: 127.0.0.1:2379
-{#  hosts:
-  {% for host in groups['pgsql'] %}
-    - {{ hostvars[host]['ansible_host'] }}:2379
-  {% endfor %} #}
+  host: {{ etcd_host }}:{{ etcd_port }}
 
 restapi:
   listen: 0.0.0.0:8008
