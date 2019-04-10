@@ -45,4 +45,5 @@
   file:
     state: absent
     path: "{{ postgresql_data }}"
+  when: postgresql_remove_data
   tags: postgresql

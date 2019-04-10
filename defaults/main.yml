@@ -22,6 +22,8 @@ postgresql_data: "/var/lib/postgresql/{{ postgresql_version }}/data"
 postgresql_superuser_password: superuser-password
 postgresql_replicator_password: "{{ postgresql_superuser_password }}"
 
+postgresql_remove_data: false
+
 # etcd variables
 etcd_host: 127.0.0.1
 etcd_port: 2379

@@ -22,7 +22,7 @@ Role Variables
 - postgresql_data: path to postgresql data directory
 - postgresql_superuser_password: postgresql superuser password
 - postgresql_replicator_password: postgresql replicator password
-
+- postgresql_remove_data: set this variable to 'true' if postgres was not installed on target host or you want to reinit cluster
 - etcd_host: host address for the etcd endpoint
 - etcd_port: port address for the etcd endpoint
 
