@@ -32,35 +32,42 @@ bootstrap:
         max_replication_slots: 5
         hot_standby: "on"
         wal_log_hints: "on"
+      pg_hba:
+        - host replication replicator 0.0.0.0/0 md5
+        - host all all 0.0.0.0/0 md5
+        - local all postgres   peer
 
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
     - encoding: UTF8
 
-  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
-    - host replication replicator 10.0.0.0/8 md5
-    - host replication replicator 127.0.0.1/32 md5
-    - host all all 0.0.0.0/0 md5
+#  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
+#    - host replication replicator 0.0.0.0/0 md5
+#    - host all all 0.0.0.0/0 md5
+#    - local all postgres   peer
 
 postgresql:
+  authentication:
+    replication:
+      username: {{ postgresql_replication_username }}
+      password: {{ postgresql_replication_password }}
+    superuser:
+      username: postgres
+      password: {{ postgresql_superuser_password }}
   listen: 0.0.0.0
   connect_address: {{ ansible_default_ipv4.address }}:5432
   data_dir: {{ postgresql_data }}
   bin_dir: {{ postgresql_bin }}
-  #use_unix_socket:  true
+#  use_unix_socket:  true
   pg_rewind:
-    username: superuser
+    username: postgres
     password: {{ postgresql_superuser_password }}
   pg_hba:
-  - host all all 0.0.0.0/0 md5
-  - host replication replicator 0.0.0.0/0 md5
-  replication:
-    username: replicator
-    password: {{ postgresql_replicator_password }}
-    network:  0.0.0.0/0
-  superuser:
-    username: superuser
-    password: {{ postgresql_superuser_password }}
-  admin:
-    username: admin
-    password: {{ postgresql_superuser_password }}
-  restore: /opt/patroni/patroni/scripts/restore.py
+  {% for client in postgresql_pg_hba %}
+    - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default(None) }} {{ client.method }}
+  {% endfor %}
+#  - host all all 0.0.0.0/0 md5
+#  - host replication replicator 0.0.0.0/0 md5
+#  - local all postgres   peer
+  parameters:
+    synchronous_commit: "off"
+    synchronous_standby_names: "*"

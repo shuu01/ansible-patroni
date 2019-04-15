@@ -9,6 +9,8 @@ patroni_scope: cluster
 patroni_rest_username: patroni-username
 patroni_rest_password: patroni-password
 
+patroni_dcs: etcd
+
 # postgresql variables (override it with group_vars or host_vars if needed)
 postgresql_version: 11
 
@@ -19,10 +21,17 @@ postgresql_apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansi
 postgresql_bin: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
 postgresql_data: "/var/lib/postgresql/{{ postgresql_version }}/data"
 
+postgresql_superuser_username: postgres
 postgresql_superuser_password: superuser-password
-postgresql_replicator_password: "{{ postgresql_superuser_password }}"
+postgresql_replication_username: replicator
+postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
-postgresql_remove_data: false
+postgresql_create_main_cluster: false
+
+postgresql_pg_hba: []
+  - { type: "host",  database: "all",         user: "all",                                   address: "0.0.0.0/0", method: "md5" }
+  - { type: "host",  database: "replication", user: "{{ postgresql_replication_username }}", address: "0.0.0.0/0", method: "md5" }
+  - { type: "local", database: "all",         user: "{{ postgresql_superuser_username }}",   address: None,        method: "peer" }
 
 # etcd variables
 etcd_host: 127.0.0.1

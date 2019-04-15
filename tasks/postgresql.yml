@@ -21,6 +21,26 @@
   when: postgresql_apt_repository is defined
   tags: postgresql
 
+- name: postgresql | install common package
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - postgresql-common
+  tags: postgresql
+
+- name: postgresql | create createcluster.d directory
+  file:
+    path: /etc/postgresql-common/createcluster.d
+    state: directory
+
+- name: postgresql | disable initializing of a default postgresql cluster
+  template:
+    src: createcluster.conf.j2
+    dest: /etc/postgresql-common/createcluster.d/createcluster.conf
+  when: ansible_os_family == "Debian"
+  tags: postgresql
+
 - name: postgresql | install
   apt:
     name: "{{ item }}"
@@ -41,9 +61,9 @@
     enabled: no
   tags: postgresql
 
-- name: postgresql | remove data directory
-  file:
-    state: absent
-    path: "{{ postgresql_data }}"
-  when: postgresql_remove_data
-  tags: postgresql
+#- name: postgresql | remove data directory
+  #file:
+    #state: absent
+    #path: "{{ postgresql_data }}"
+  #when: postgresql_remove_data
+  #tags: postgresql
