@@ -23,19 +23,13 @@ bootstrap:
       use_pg_rewind: true
       use_slots: true
       parameters:
-        archive_mode: "on"
-        wal_level: hot_standby
-        archive_command: "{{ patroni_archive_command }}"
-        max_wal_senders: 10
-        wal_keep_segments: 8
-        archive_timeout: 1800s
-        max_replication_slots: 5
-        hot_standby: "on"
-        wal_log_hints: "on"
+{% for parameter in patroni_pg_parameters %}
+        {{ parameter.option }}: {{ parameter.value }}
+{% endfor %}
       pg_hba:
-        - host replication replicator 0.0.0.0/0 md5
-        - host all all 0.0.0.0/0 md5
-        - local all postgres   peer
+{% for client in patroni_pg_hba %}
+      - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default("") }} {{ client.method }}
+{% endfor %}
 
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
     - encoding: UTF8
@@ -59,15 +53,13 @@ postgresql:
   bin_dir: {{ postgresql_bin }}
 #  use_unix_socket:  true
   pg_rewind:
-    username: postgres
+    username: {{ postgresql_superuser_username }}
     password: {{ postgresql_superuser_password }}
   pg_hba:
-  {% for client in postgresql_pg_hba %}
+{% for client in patroni_pg_hba %}
     - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default(None) }} {{ client.method }}
-  {% endfor %}
-#  - host all all 0.0.0.0/0 md5
-#  - host replication replicator 0.0.0.0/0 md5
-#  - local all postgres   peer
+{% endfor %}
   parameters:
-    synchronous_commit: "off"
-    synchronous_standby_names: "*"
+{% for parameter in patroni_pg_parameters %}
+    {{ parameter.option }}: {{ parameter.value }}
+{% endfor %}

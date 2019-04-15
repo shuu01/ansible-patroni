@@ -28,10 +28,24 @@ postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
 postgresql_create_main_cluster: false
 
-postgresql_pg_hba: []
+patroni_pg_hba:
   - { type: "host",  database: "all",         user: "all",                                   address: "0.0.0.0/0", method: "md5" }
   - { type: "host",  database: "replication", user: "{{ postgresql_replication_username }}", address: "0.0.0.0/0", method: "md5" }
-  - { type: "local", database: "all",         user: "{{ postgresql_superuser_username }}",   address: None,        method: "peer" }
+  - { type: "local", database: "all",         user: "{{ postgresql_superuser_username }}",   address: "",        method: "peer" }
+
+patroni_pg_parameters:
+  - { option: synchronous_commit,        value: "off" }
+  - { option: synchronous_standby_names, value: "'*'" }
+  - { option: shared_preload_libraries,  value: "pg_stat_statements" }
+  - { option: archive_mode,              value: "on" }
+  - { option: wal_level,                 value: "hot_standby" }
+  - { option: archive_command,           value: "{{ patroni_archive_command }}" }
+  - { option: max_wal_senders,           value: "10" }
+  - { option: wal_keep_segments,         value: "8" }
+  - { option: archive_timeout,           value: "1800s" }
+  - { option: max_replication_slots,     value: "5" }
+  - { option: hot_standby,               value: "on" }
+  - { option: wal_log_hints,             value: "on" }
 
 # etcd variables
 etcd_host: 127.0.0.1
