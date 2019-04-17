@@ -28,6 +28,12 @@ postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
 postgresql_create_main_cluster: false
 
+patroni_dcs:
+  - { option: ttl, value: 30 }
+  - { option: loop_wait, value: 10 }
+  - { option: maximum_lag_on_failover, value: 1048576 } # 1 megabyte in bytes
+  - { option: synchronous_mode, value: true } # create at least one sync replica
+
 patroni_pg_hba:
   - { type: "host",  database: "all",         user: "all",                                   address: "0.0.0.0/0", method: "md5" }
   - { type: "host",  database: "replication", user: "{{ postgresql_replication_username }}", address: "0.0.0.0/0", method: "md5" }

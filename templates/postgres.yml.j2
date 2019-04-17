@@ -16,9 +16,9 @@ restapi:
 
 bootstrap:
   dcs:
-    ttl: &ttl 30
-    loop_wait: &loop_wait 10
-    maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+{% for parameter in patroni_dcs %}
+    {{ parameter.option }}: {{ parameter.value }}
+{% endfor %}
     postgresql:
       use_pg_rewind: true
       use_slots: true
