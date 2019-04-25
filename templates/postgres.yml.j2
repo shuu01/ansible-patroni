@@ -48,7 +48,7 @@ postgresql:
       username: {{ postgresql_replication_username }}
       password: {{ postgresql_replication_password }}
     superuser:
-      username: postgres
+      username: {{ postgresql_superuser_username }}
       password: {{ postgresql_superuser_password }}
   create_replica_methods:
     {% for method in patroni_pg_create_replica_methods | default('basebackup') %}

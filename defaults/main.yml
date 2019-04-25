@@ -58,7 +58,7 @@ patroni_initdb:
 
 patroni_pg_create_replica_methods:
   basebackup:
-    max-rate: "100M"
+    max-rate: "20M"
 # pgbackrest:
 # wal_e:
 
