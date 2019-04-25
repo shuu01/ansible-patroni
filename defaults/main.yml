@@ -3,7 +3,7 @@
 
 # patroni variables
 patroni_pg_port: 5432
-patroni_archive_command: "mkdir -p ../wal_archive && test ! -f ../wal_archive/%f && cp %p ../wal_archive/%f"
+patroni_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
 patroni_scope: cluster
 
 patroni_rest_username: patroni-username
