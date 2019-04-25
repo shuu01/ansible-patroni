@@ -36,6 +36,10 @@
     dest: /etc/patroni
   tags: patroni
 
+- debug:
+    var=patroni_pg_create_replica_methods
+  tags: patroni
+
 - name: patroni | create config
   template:
     src: postgres.yml.j2

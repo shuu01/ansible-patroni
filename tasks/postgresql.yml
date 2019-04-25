@@ -1,4 +1,9 @@
 ---
+- name: postgresql | ensure a locale exists
+  locale_gen:
+    name: ru_RU.UTF-8
+    state: present
+
 - name: postgresql | ca-certificates
   apt:
     name:
