@@ -17,15 +17,15 @@ restapi:
 
 bootstrap:
   dcs:
-    {% for parameter in patroni_dcs_parameters %}
-    {{ parameter.option }}: {{ parameter.value }}
+    {% for key, value in patroni_dcs_parameters.items() %}
+    {{ key }}: {{ value }}
     {% endfor %}
     postgresql:
       use_pg_rewind: true
       use_slots: true
       parameters:
-        {% for parameter in patroni_pg_parameters %}
-        {{ parameter.option }}: {{ parameter.value }}
+        {% for key, value in patroni_pg_parameters.items() %}
+        {{ key }}: {{ value }}
         {% endfor %}
       pg_hba:
       {% for client in patroni_pg_hba %}
@@ -33,8 +33,8 @@ bootstrap:
       {% endfor %}
 
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
-    {% for parameter in patroni_initdb %}
-    - {{ parameter.option }}: {{ parameter.value }}
+    {% for key, value in patroni_initdb.items() %}
+    - {{ key }}: {{ value }}
     {% endfor %}
 
 #  pg_hba:  # Add following lines to pg_hba.conf after running 'initdb'
@@ -73,6 +73,6 @@ postgresql:
     - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default(None) }} {{ client.method }}
     {% endfor %}
   parameters:
-    {% for parameter in patroni_pg_parameters %}
-    {{ parameter.option }}: {{ parameter.value }}
+    {% for key, value in patroni_pg_parameters.items() %}
+    {{ key }}: {{ value }}
     {% endfor %}

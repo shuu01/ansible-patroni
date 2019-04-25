@@ -28,34 +28,33 @@ postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
 postgresql_create_main_cluster: false
 
-patroni_initdb:
-  - { option: encoding, value: UTF8 }
-#  - { option: locale, value: en_US.UTF8 }
-
 patroni_dcs_parameters:
-  - { option: ttl, value: 30 }
-  - { option: loop_wait, value: 10 }
-  - { option: maximum_lag_on_failover, value: 1048576 } # 1 megabyte in bytes
-  - { option: synchronous_mode, value: true } # create at least one sync replica
+  ttl: 30
+  loop_wait: 10
+  maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
+  synchronous_mode: true # create at least one sync replica
 
 patroni_pg_hba:
   - { type: "host",  database: "all",         user: "all",                                   address: "0.0.0.0/0", method: "md5" }
   - { type: "host",  database: "replication", user: "{{ postgresql_replication_username }}", address: "0.0.0.0/0", method: "md5" }
-  - { type: "local", database: "all",         user: "all",                                   address: "",        method: "peer" }
+  - { type: "local", database: "all",         user: "all",                                   address: "",          method: "peer" }
 
 patroni_pg_parameters:
-  - { option: synchronous_commit,        value: "off" }
-  - { option: synchronous_standby_names, value: "'*'" }
-  - { option: shared_preload_libraries,  value: "pg_stat_statements" }
-  - { option: archive_mode,              value: "on" }
-  - { option: wal_level,                 value: "hot_standby" }
-  - { option: archive_command,           value: "{{ patroni_archive_command }}" }
-  - { option: max_wal_senders,           value: "10" }
-  - { option: wal_keep_segments,         value: "8" }
-  - { option: archive_timeout,           value: "1800s" }
-  - { option: max_replication_slots,     value: "5" }
-  - { option: hot_standby,               value: "on" }
-  - { option: wal_log_hints,             value: "on" }
+  synchronous_commit: "off"
+  synchronous_standby_names: "'*'"
+  shared_preload_libraries: "pg_stat_statements"
+  archive_mode: "on"
+  wal_level: "hot_standby"
+  archive_command: "{{ patroni_archive_command }}"
+  max_wal_senders: "10"
+  wal_keep_segments: "8"
+  archive_timeout: "1800s"
+  max_replication_slots: "5"
+  hot_standby: "on"
+  wal_log_hints: "on"
+
+patroni_initdb:
+  encoding: UTF8
 
 patroni_pg_create_replica_methods:
   basebackup:
@@ -64,7 +63,7 @@ patroni_pg_create_replica_methods:
 # wal_e:
 
 patroni_pg_listen: 0.0.0.0
-patroni_pg_connect_address: {{ ansible_default_ipv4.address }}:{{ patroni_pg_port }}
+patroni_pg_connect_address: "{{ ansible_default_ipv4.address }}:{{ patroni_pg_port }}"
 patroni_pg_use_unix_socket: false
 
 # etcd variables
