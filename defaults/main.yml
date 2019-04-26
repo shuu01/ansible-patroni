@@ -3,7 +3,8 @@
 
 # patroni variables
 patroni_pg_port: 5432
-patroni_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
+patroni_pg_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
+patroni_pg_restore_command: "cp ../wal_archive/%f %p"
 patroni_scope: cluster
 
 patroni_rest_username: patroni-username
@@ -28,7 +29,7 @@ postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
 postgresql_create_main_cluster: false
 
-patroni_dcs_parameters:
+patroni_pg_dcs_parameters:
   ttl: 30
   loop_wait: 10
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
@@ -53,7 +54,7 @@ patroni_pg_parameters:
   hot_standby: "on"
   wal_log_hints: "on"
 
-patroni_initdb:
+patroni_pg_initdb:
   encoding: UTF8
 
 patroni_pg_create_replica_methods:
@@ -67,5 +68,5 @@ patroni_pg_connect_address: "{{ ansible_default_ipv4.address }}:{{ patroni_pg_po
 patroni_pg_use_unix_socket: false
 
 # etcd variables
-etcd_host: 127.0.0.1
-etcd_port: 2379
+patroni_etcd_host: 127.0.0.1
+patroni_etcd_port: 2379
