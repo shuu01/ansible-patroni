@@ -29,24 +29,24 @@ postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
 postgresql_create_main_cluster: false
 
-patroni_pg_dcs_parameters:
+patroni_bootstrap_dcs:
   ttl: 30
   loop_wait: 10
   maximum_lag_on_failover: 1048576 # 1 megabyte in bytes
   synchronous_mode: true # create at least one sync replica
 
-patroni_pg_hba:
+patroni_bootstrap_pg_hba:
   - { type: "host",  database: "all",         user: "all",                                   address: "0.0.0.0/0", method: "md5" }
   - { type: "host",  database: "replication", user: "{{ postgresql_replication_username }}", address: "0.0.0.0/0", method: "md5" }
   - { type: "local", database: "all",         user: "all",                                   address: "",          method: "peer" }
 
-patroni_pg_parameters:
+patroni_bootstrap_pg_parameters:
   synchronous_commit: "off"
   synchronous_standby_names: "'*'"
   shared_preload_libraries: "pg_stat_statements"
   archive_mode: "on"
   wal_level: "hot_standby"
-  archive_command: "{{ patroni_archive_command }}"
+  archive_command: "{{ patroni_pg_archive_command }}"
   max_wal_senders: "10"
   wal_keep_segments: "8"
   archive_timeout: "1800s"
@@ -54,8 +54,15 @@ patroni_pg_parameters:
   hot_standby: "on"
   wal_log_hints: "on"
 
-patroni_pg_initdb:
+patroni_bootstrap_recovery_conf:
+  restore_command: "{{ patroni_pg_restore_command }}"
+
+patroni_bootstrap_initdb:
   encoding: UTF8
+
+patroni_pg_parameters: []
+patroni_pg_hba: []
+patroni_pg_recovery_conf: {}
 
 patroni_pg_create_replica_methods:
   basebackup:

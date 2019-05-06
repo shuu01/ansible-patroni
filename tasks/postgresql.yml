@@ -1,8 +1,8 @@
 ---
-- name: postgresql | ensure a locale exists
-  locale_gen:
-    name: ru_RU.UTF-8
-    state: present
+#- name: postgresql | ensure a locale exists
+  #locale_gen:
+    #name: ru_RU.UTF-8
+    #state: present
 
 - name: postgresql | ca-certificates
   apt:
@@ -51,6 +51,7 @@
     name: "{{ item }}"
     state: present
     update_cache: yes
+    install_recommends: no
   loop:
     - "postgresql-{{postgresql_version}}"
     - "postgresql-client-{{postgresql_version}}"

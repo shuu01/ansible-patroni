@@ -17,25 +17,36 @@ restapi:
 
 bootstrap:
   dcs:
-    {% for key, value in patroni_pg_dcs_parameters.items() %}
+    {% for key, value in patroni_bootstrap_dcs.items() %}
     {{ key }}: {{ value }}
     {% endfor %}
     postgresql:
       use_pg_rewind: true
       use_slots: true
+
+      {% if patroni_bootstrap_pg_parameters | d({}) %}
       parameters:
-        {% for key, value in patroni_pg_parameters.items() %}
+        {% for key, value in patroni_bootstrap_pg_parameters.items() %}
         {{ key }}: {{ value }}
         {% endfor %}
+      {% endif %}
+
+      {% if patroni_bootstrap_recovery_conf | d({}) %}
       recovery_conf:
-        restore_command: "{{ patroni_pg_restore_command }}"
+        {% for key, value in patroni_bootstrap_recovery_conf.items() %}
+        {{ key }}: {{ value }}
+        {% endfor %}
+      {% endif %}
+
+      {% if patroni_bootstrap_pg_hba | d([]) %}
       pg_hba:
-      {% for client in patroni_pg_hba %}
-      - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default("") }} {{ client.method }}
+      {% for client in patroni_bootstrap_pg_hba %}
+        - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | d("") }} {{ client.method }}
       {% endfor %}
+      {% endif %}
 
   initdb:  # Note: It needs to be a list (some options need values, others are switches)
-    {% for key, value in patroni_pg_initdb.items() %}
+    {% for key, value in patroni_bootstrap_initdb.items() %}
     - {{ key }}: {{ value }}
     {% endfor %}
 
@@ -52,16 +63,19 @@ postgresql:
     superuser:
       username: {{ postgresql_superuser_username }}
       password: {{ postgresql_superuser_password }}
+
   create_replica_methods:
-    {% for method in patroni_pg_create_replica_methods | default('basebackup') %}
+    {% for method in patroni_pg_create_replica_methods | default(['basebackup']) %}
     - {{ method }}
     {% endfor %}
+
   {% for method, options in patroni_pg_create_replica_methods.items() | default({'basebackup': {}}) %}
   {{ method }}:
     {% for key, value in options.items() %}
     {{ key }}: {{ value }}
     {% endfor %}
   {% endfor %}
+
   listen: {{ patroni_pg_listen }}
   connect_address: {{ patroni_pg_connect_address }}
   data_dir: {{ postgresql_data }}
@@ -70,13 +84,24 @@ postgresql:
   pg_rewind:
     username: {{ postgresql_superuser_username }}
     password: {{ postgresql_superuser_password }}
+
+  {% if patroni_pg_hba | d([]) %}
   pg_hba:
     {% for client in patroni_pg_hba %}
     - {{ client.type }} {{ client.database }} {{ client.user }} {{ client.address | default(None) }} {{ client.method }}
     {% endfor %}
+  {% endif %}
+
+  {% if patroni_pg_parameters | d({}) %}
   parameters:
     {% for key, value in patroni_pg_parameters.items() %}
     {{ key }}: {{ value }}
     {% endfor %}
+  {% endif %}
+
+  {% if patroni_pg_recovery_conf | d({}) %}
   recovery_conf:
-    restore_command: "{{ patroni_pg_restore_command }}"
+    {% for key, value in patroni_bootstrap_recovery_conf %}
+    {{ key }}: {{ value }}
+    {% endfor %}
+  {% endif %}
