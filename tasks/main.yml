@@ -1,5 +1,4 @@
 ---
-
 - import_tasks: pip.yml
   when: ansible_python_interpreter == "/usr/bin/python"
 
@@ -8,52 +7,4 @@
 
 - import_tasks: postgresql.yml
 
-- name: patroni | suggested packages install
-  apt:
-    name: "{{ item }}"
-    state: latest
-    install_recommends: no
-  loop:
-    - curl
-  tags: patroni
-
-#- name: patroni checkout
-  #git:
-    #repo: https://github.com/zalando/patroni.git
-    #dest: /opt/patroni
-  #tags: patroni
-
-- name: patroni | install
-  pip:
-    name: "{{ item }}"
-  loop:
-    - patroni[{{patroni_dcs}}]
-  tags: patroni
-
-- name: patroni | create /etc/patroni
-  file:
-    state: directory
-    dest: /etc/patroni
-  tags: patroni
-
-- name: patroni | create config
-  template:
-    src: postgres.yml.j2
-    dest: /etc/patroni/postgres.yml
-    backup: yes
-  tags: patroni
-
-- name: patroni | create patroni.service systemd unit
-  template:
-    src: patroni.service.j2
-    dest: /etc/systemd/system/patroni.service
-    backup: yes
-  tags: patroni
-
-- name: patroni | restart
-  systemd:
-    service: patroni
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
-  tags: patroni
+- import_tasks: patroni.yml

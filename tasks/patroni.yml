@@ -1,0 +1,49 @@
+- name: patroni | suggested packages install
+  apt:
+    name:
+    - curl
+    state: latest
+    install_recommends: no
+    force_apt_get: yes
+  tags: patroni
+
+#- name: patroni checkout
+  #git:
+    #repo: https://github.com/zalando/patroni.git
+    #dest: /opt/patroni
+  #tags: patroni
+
+- name: patroni | install
+  pip:
+    name:
+    - patroni[{{ patroni_dcs }}]
+    - psycopg2
+  tags: patroni
+
+- name: patroni | create /etc/patroni
+  file:
+    state: directory
+    dest: /etc/patroni
+  tags: patroni
+
+- name: patroni | create config
+  template:
+    src: patroni.yml.j2
+    dest: /etc/patroni/patroni.yml
+    backup: yes
+  tags: patroni
+
+- name: patroni | create patroni.service systemd unit
+  template:
+    src: patroni.service.j2
+    dest: /etc/systemd/system/patroni.service
+    backup: yes
+  tags: patroni
+
+- name: patroni | restart
+  systemd:
+    service: patroni
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  tags: patroni

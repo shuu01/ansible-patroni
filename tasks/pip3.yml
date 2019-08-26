@@ -1,21 +1,19 @@
 ---
 - name: pip3 | install
   apt:
-    name: "{{ item }}"
-    state: latest
-    install_recommends: no
-  loop:
+    name:
     - python3-pip
     - python3-setuptools
     - build-essential
     - python3-dev
     - libpq-dev
+    state: latest
+    install_recommends: no
+    force_apt_get: yes
   tags: pip
 
-- name: pip3 | install patroni dependencies
-  pip:
-    name: "{{ item }}"
-  loop:
-    - python-etcd
-    - wheel
-  tags: pip
+#- name: pip3 | install patroni dependencies
+  #pip:
+    #name:
+    #- wheel
+  #tags: pip

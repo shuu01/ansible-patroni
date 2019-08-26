@@ -4,9 +4,8 @@
 name: {{ patroni_node_name }}
 scope: &scope {{ patroni_scope }}
 
-etcd:
-  scope: *scope
-  host: {{ patroni_etcd_host }}:{{ patroni_etcd_port }}
+{% include 'dcs/' + (patroni_dcs |d('etcd')) + '.yml.j2' %}
+
 
 restapi:
   listen: 0.0.0.0:8008

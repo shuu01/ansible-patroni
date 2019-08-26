@@ -19,7 +19,7 @@ Group=postgres
 
 Environment=PATH=PATH=/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:{{ postgresql_bin }}
 
-ExecStart=/usr/local/bin/patroni /etc/patroni/postgres.yml
+ExecStart=/usr/local/bin/patroni /etc/patroni/patroni.yml
 
 # only kill the patroni process, not it's children, so it will gracefully stop postgres
 KillMode=process

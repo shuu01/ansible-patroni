@@ -1,6 +1,4 @@
 ---
-# defaults file for patroni
-
 # patroni variables
 patroni_pg_port: 5432
 patroni_pg_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
@@ -10,7 +8,7 @@ patroni_scope: cluster
 patroni_rest_username: patroni-username
 patroni_rest_password: patroni-password
 
-patroni_dcs: etcd
+patroni_dcs: consul
 
 # postgresql variables (override it with group_vars or host_vars if needed)
 postgresql_version: 11
@@ -62,7 +60,7 @@ patroni_bootstrap_initdb:
 
 patroni_pg_parameters: []
 patroni_pg_hba: []
-patroni_pg_recovery_conf: {}
+#patroni_pg_recovery_conf: {}
 
 patroni_pg_create_replica_methods:
   basebackup:
@@ -75,5 +73,31 @@ patroni_pg_connect_address: "{{ ansible_default_ipv4.address }}:{{ patroni_pg_po
 patroni_pg_use_unix_socket: false
 
 # etcd variables
-patroni_etcd_host: 127.0.0.1
-patroni_etcd_port: 2379
+patroni_etcd_host: ""
+patroni_etcd_hosts: 127.0.0.1:2379
+patroni_etcd_use_proxies: false
+patroni_etcd_url: ""
+patroni_etcd_proxy: ""
+patroni_etcd_srv: ""
+patroni_etcd_protocol: http
+patroni_etcd_username: ""
+patroni_etcd_password: ""
+patroni_etcd_cacert: ""
+patroni_etcd_cert: ""
+patroni_etcd_key: ""
+
+# consul variables
+patroni_consul_host: "127.0.0.1:{{ patroni_consul_port | default(8500) }}"
+patroni_consul_port: 8500
+patroni_consul_url: ""
+patroni_consul_scheme: http
+patroni_consul_token: ""
+patroni_consul_verify: ""
+patroni_consul_cacert: ""
+patroni_consul_cert: ""
+patroni_consul_key: ""
+patroni_consul_dc: ""
+patroni_consul_checks: ""
+patroni_consul_register_service: false
+patroni_consul_service_check_interval: 5s
+patroni_consul_consistency: default

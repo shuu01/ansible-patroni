@@ -1,15 +1,16 @@
 ---
 - name: pip | install
   apt:
-    name: "{{ item }}"
-    state: latest
-    install_recommends: no
-  loop:
+    name:
     - python-pip
     - python-setuptools
     - build-essential
     - python-dev
     - libpq-dev
+    state: latest
+    install_recommends: no
+    force_apt_get: yes
+
   tags: pip
 
 - name: pip | install patroni dependencies
