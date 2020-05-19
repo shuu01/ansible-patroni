@@ -6,5 +6,6 @@
   when: ansible_python_interpreter == "/usr/bin/python3"
 
 - import_tasks: postgresql.yml
+  when: postgresql_install is defined and postgresql_install
 
 - import_tasks: patroni.yml

@@ -1,5 +1,5 @@
 #jinja2: trim_blocks:True, lstrip_blocks: True
-#{{ ansible_managed }}
+{{ ansible_managed | comment }}
 
 name: {{ patroni_node_name }}
 scope: &scope {{ patroni_scope }}
@@ -16,25 +16,19 @@ restapi:
 
 bootstrap:
   dcs:
-    {% for key, value in patroni_bootstrap_dcs.items() %}
-    {{ key }}: {{ value }}
-    {% endfor %}
+    {{ patroni_bootstrap_dcs | to_nice_yaml | trim | indent(4) }}
     postgresql:
       use_pg_rewind: true
       use_slots: true
 
       {% if patroni_bootstrap_pg_parameters | d({}) %}
       parameters:
-        {% for key, value in patroni_bootstrap_pg_parameters.items() %}
-        {{ key }}: {{ value }}
-        {% endfor %}
+        {{ patroni_bootstrap_pg_parameters | to_nice_yaml | trim | indent(8) }}
       {% endif %}
 
       {% if patroni_bootstrap_recovery_conf | d({}) %}
       recovery_conf:
-        {% for key, value in patroni_bootstrap_recovery_conf.items() %}
-        {{ key }}: {{ value }}
-        {% endfor %}
+        {{ patroni_bootstrap_recovery_conf | to_nice_yaml | trim | indent(8) }}
       {% endif %}
 
       {% if patroni_bootstrap_pg_hba | d([]) %}
@@ -70,16 +64,14 @@ postgresql:
 
   {% for method, options in patroni_pg_create_replica_methods.items() | default({'basebackup': {}}) %}
   {{ method }}:
-    {% for key, value in options.items() %}
-    {{ key }}: {{ value }}
-    {% endfor %}
+    {{ options | to_nice_yaml | trim | indent(4) }}
   {% endfor %}
 
   listen: {{ patroni_pg_listen }}
   connect_address: {{ patroni_pg_connect_address }}
   data_dir: {{ postgresql_data }}
   bin_dir: {{ postgresql_bin }}
-  use_unix_socket:  {{ patroni_pg_use_unix_socket }}
+  use_unix_socket: {{ patroni_pg_use_unix_socket }}
   pg_rewind:
     username: {{ postgresql_superuser_username }}
     password: {{ postgresql_superuser_password }}
@@ -93,14 +85,15 @@ postgresql:
 
   {% if patroni_pg_parameters | d({}) %}
   parameters:
-    {% for key, value in patroni_pg_parameters.items() %}
-    {{ key }}: {{ value }}
-    {% endfor %}
+    {{ patroni_pg_parameters | to_nice_yaml | trim | indent(4) }}
   {% endif %}
 
   {% if patroni_pg_recovery_conf | d({}) %}
   recovery_conf:
-    {% for key, value in patroni_bootstrap_recovery_conf %}
-    {{ key }}: {{ value }}
-    {% endfor %}
+    {{ patroni_pg_recovery_conf | to_nice_yaml | trim | indent(4) }}
+  {% endif %}
+
+  {% if patroni_pg_tags | d({}) %}
+  tags:
+    {{ patroni_pg_tags | to_nice_yaml | trim | indent(4) }}
   {% endif %}

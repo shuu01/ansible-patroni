@@ -3,7 +3,8 @@
 patroni_pg_port: 5432
 patroni_pg_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
 patroni_pg_restore_command: "cp ../wal_archive/%f %p"
-patroni_scope: cluster
+patroni_scope: postgres
+patroni_node_name: "{{ inventory_hostname }}"
 
 patroni_rest_username: patroni-username
 patroni_rest_password: patroni-password
@@ -11,6 +12,7 @@ patroni_rest_password: patroni-password
 patroni_dcs: consul
 
 # postgresql variables (override it with group_vars or host_vars if needed)
+postgresql_install: true
 postgresql_version: 11
 
 postgresql_apt_key_id: "ACCC4CF8"
@@ -25,7 +27,7 @@ postgresql_superuser_password: superuser-password
 postgresql_replication_username: replicator
 postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
-postgresql_create_main_cluster: false
+postgresql_create_main_cluster: 'false'
 
 patroni_bootstrap_dcs:
   ttl: 30
@@ -40,10 +42,11 @@ patroni_bootstrap_pg_hba:
 
 patroni_bootstrap_pg_parameters:
   synchronous_commit: "off"
-  synchronous_standby_names: "'*'"
+#  synchronous_standby_names: "'*'"
+  synchronous_standby_names: ""
   shared_preload_libraries: "pg_stat_statements"
   archive_mode: "on"
-  wal_level: "hot_standby"
+  wal_level: "replica"
   archive_command: "{{ patroni_pg_archive_command }}"
   max_wal_senders: "10"
   wal_keep_segments: "8"
@@ -57,14 +60,16 @@ patroni_bootstrap_recovery_conf:
 
 patroni_bootstrap_initdb:
   encoding: UTF8
+  locale: UTF8
 
-patroni_pg_parameters: []
+patroni_pg_parameters: {}
 patroni_pg_hba: []
-#patroni_pg_recovery_conf: {}
+patroni_pg_recovery_conf: {}
+patroni_pg_tags: {}
 
 patroni_pg_create_replica_methods:
   basebackup:
-    max-rate: "20M"
+    max-rate: "100M"
 # pgbackrest:
 # wal_e:
 
