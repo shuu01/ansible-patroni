@@ -1,0 +1,71 @@
+- name: create walg temporary directory
+  tempfile:
+    state: directory
+    prefix: walg.
+  register: install_temp
+
+- name: download walg package
+  get_url:
+    url: "{{ patroni_walg_url }}"
+    dest: "{{ install_temp.path }}"
+
+- name: create walg path
+  file:
+    path: "{{ patroni_walg_path }}"
+    state: directory
+
+- name: install walg package
+  unarchive:
+    remote_src: yes
+    src: "{{ install_temp.path }}/{{ patroni_walg_package }}"
+    dest: "{{ patroni_walg_path }}"
+
+- name: install walg scripts
+  copy:
+    src: "{{ item }}"
+    dest: "{{ patroni_walg_path }}/{{ item }}"
+    mode: a+x
+  loop:
+  - wal-fetch.sh
+  - wal-push.sh
+  - backup.sh
+
+- name: generate walg config
+  template:
+    src: .walg.json.j2
+    dest: "{{ postgresql_home }}/.walg.json"
+
+- name: cron full backup
+  cron:
+    name: pg_backup_full
+    weekday: "0"
+    hour: "22"
+    minute: "0"
+    user: postgres
+    job: "{{ patroni_walg_path }}/backup.sh {{ patroni_walg_path }}/wal-g backup-push --full {{ postgresql_data }}"
+    cron_file: pg_backup_full
+  when: patroni_walg_cron
+
+- name: cron increment backup
+  cron:
+    name: pg_backup_incr
+    weekday: "1-6"
+    hour: "22"
+    minute: "0"
+    user: postgres
+    job: "{{ patroni_walg_path }}/backup.sh {{ patroni_walg_path }}/wal-g backup-push {{ postgresql_data }}"
+    cron_file: pg_backup_incr
+  when: patroni_walg_cron
+
+- name: cron delete old backups
+  cron:
+    name: pg_delete_backup
+    weekday: "0"
+    hour: "23"
+    minute: "0"
+    user: postgres
+    job: "{{ patroni_walg_path }}/backup.sh {{ patroni_walg_path }}/wal-g delete retain FULL 4"
+    cron_file: pg_delete_backups
+  when: patroni_walg_cron
+
+

@@ -1,2 +1,4 @@
 ---
 # vars file for patroni
+patroni_walg_package: "wal-g.linux-amd64.tar.gz"
+patroni_walg_url: "https://github.com/wal-g/wal-g/releases/download/v{{ patroni_walg_version }}/{{ patroni_walg_package }}"

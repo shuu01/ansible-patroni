@@ -5,7 +5,17 @@
 - import_tasks: pip3.yml
   when: ansible_python_interpreter == "/usr/bin/python3"
 
-- import_tasks: postgresql.yml
+- import_tasks: postgres.yml
   when: postgresql_install is defined and postgresql_install
+  tags: postgres
+
+- import_tasks: postgres-extensions.yml
+  when: postgres_extensions is defined and postgres_extensions
+  tags: postgres_extensions
 
 - import_tasks: patroni.yml
+  tags: patroni
+
+- import_tasks: walg.yml
+  when: patroni_walg_install is defined and patroni_walg_install
+  tags: walg

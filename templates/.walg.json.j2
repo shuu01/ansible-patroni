@@ -1,0 +1,14 @@
+{
+  "WALG_S3_PREFIX": "{{ patroni_walg_s3_prefix }}",
+  "AWS_ENDPOINT": "{{ patroni_walg_s3_endpoint }}",
+  "AWS_S3_FORCE_PATH_STYLE": "true",
+  "AWS_ACCESS_KEY_ID": "{{ patroni_walg_s3_key }}",
+  "AWS_SECRET_ACCESS_KEY": "{{ patroni_walg_s3_secret }}",
+  "PGDATA": "{{ patroni_walg_pgdata }}",
+  "PGHOST": "/var/run/postgresql/.s.PGSQL.5432",
+  "WALG_UPLOAD_CONCURRENCY": "2",
+  "WALG_DOWNLOAD_CONCURRENCY": "2",
+  "WALG_UPLOAD_DISK_CONCURRENCY": "2",
+  "WALG_DELTA_MAX_STEPS": "7",
+  "WALG_COMPRESSION_METHOD": "brotli"
+}

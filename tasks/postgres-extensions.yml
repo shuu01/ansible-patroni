@@ -1,0 +1,12 @@
+- name: postgresql-extensions | generate
+  set_fact:
+    postgres_ext: "{{ postgres_ext | default([]) + ['postgresql-{{ postgresql_version }}-' + item] }}"
+  loop: "{{ postgres_extensions }}"
+
+- name: postgresql-extensions | install
+  apt:
+    name: "{{ postgres_ext }}"
+    state: present
+    update_cache: yes
+    install_recommends: no
+    force_apt_get: yes

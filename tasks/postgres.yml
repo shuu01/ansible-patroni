@@ -11,7 +11,6 @@
     - gpg
     state: present
     force_apt_get: yes
-  tags: postgresql
 
 - name: postgresql | add apt-key
   apt_key:
@@ -19,14 +18,12 @@
     url: "{{ postgresql_apt_key_url }}"
     state: present
   when: postgresql_apt_key_url and postgresql_apt_key_id
-  tags: postgresql
 
 - name: postgresql | add apt
   apt_repository:
     repo: "{{ postgresql_apt_repository }}"
     state: present
   when: postgresql_apt_repository is defined
-  tags: postgresql
 
 - name: postgresql | install common package
   apt:
@@ -34,7 +31,6 @@
     - postgresql-common
     state: present
     force_apt_get: yes
-  tags: postgresql
 
 - name: postgresql | create createcluster.d directory
   file:
@@ -46,7 +42,6 @@
     src: createcluster.conf.j2
     dest: /etc/postgresql-common/createcluster.d/createcluster.conf
   when: ansible_os_family == "Debian"
-  tags: postgresql
 
 - name: postgresql | install
   apt:
@@ -59,18 +54,15 @@
     update_cache: yes
     install_recommends: no
     force_apt_get: yes
-  tags: postgresql
 
-- name: postgresql | stop service
-  systemd:
-    name: postgresql
-    state: stopped
-    enabled: no
-  tags: postgresql
+#- name: postgresql | stop service
+  #systemd:
+    #name: postgresql
+    #state: stopped
+    #enabled: no
 
 #- name: postgresql | remove data directory
   #file:
     #state: absent
     #path: "{{ postgresql_data }}"
   #when: postgresql_remove_data
-  #tags: postgresql

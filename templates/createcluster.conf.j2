@@ -1,3 +1,3 @@
 {{ ansible_managed | comment }}
 
-create_main_cluster = {{ postgresql_create_main_cluster }}
+create_main_cluster = {{ postgresql_create_main_cluster | string | lower }}

@@ -3,6 +3,8 @@
 patroni_pg_port: 5432
 patroni_pg_archive_command: "mkdir -p ../wal_archive && cp %p ../wal_archive/%f"
 patroni_pg_restore_command: "cp ../wal_archive/%f %p"
+patroni_walg_archive_command: '{{ patroni_walg_path }}/wal-g wal-push %p'
+patroni_walg_restore_command: '{{ patroni_walg_path }}/wal-g wal-fetch %f %p'
 patroni_scope: postgres
 patroni_node_name: "{{ inventory_hostname }}"
 
@@ -15,19 +17,25 @@ patroni_dcs: consul
 postgresql_install: true
 postgresql_version: 11
 
+# extensions
+postgres_extensions:
+- postgis-3
+- cron
+
 postgresql_apt_key_id: "ACCC4CF8"
 postgresql_apt_key_url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
 postgresql_apt_repository: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
 
+postgresql_home: /var/lib/postgresql
 postgresql_bin: "/usr/lib/postgresql/{{ postgresql_version }}/bin"
-postgresql_data: "/var/lib/postgresql/{{ postgresql_version }}/data"
+postgresql_data: "{{ postgresql_home }}/{{ postgresql_version }}/data"
 
 postgresql_superuser_username: postgres
 postgresql_superuser_password: superuser-password
 postgresql_replication_username: replicator
 postgresql_replication_password: "{{ postgresql_superuser_password }}"
 
-postgresql_create_main_cluster: 'false'
+postgresql_create_main_cluster: false
 
 patroni_bootstrap_dcs:
   ttl: 30
@@ -42,9 +50,9 @@ patroni_bootstrap_pg_hba:
 
 patroni_bootstrap_pg_parameters:
   synchronous_commit: "off"
-#  synchronous_standby_names: "'*'"
-  synchronous_standby_names: ""
-  shared_preload_libraries: "pg_stat_statements"
+  synchronous_standby_names: "'*'"
+#  synchronous_standby_names: ""
+  shared_preload_libraries: "pg_stat_statements, pg_cron"
   archive_mode: "on"
   wal_level: "replica"
   archive_command: "{{ patroni_pg_archive_command }}"
@@ -64,7 +72,8 @@ patroni_bootstrap_initdb:
 
 patroni_pg_parameters: {}
 patroni_pg_hba: []
-patroni_pg_recovery_conf: {}
+patroni_pg_recovery_conf:
+  restore_command: '{{ patroni_walg_restore_command }}'
 patroni_pg_tags: {}
 
 patroni_pg_create_replica_methods:
@@ -106,3 +115,17 @@ patroni_consul_checks: ""
 patroni_consul_register_service: false
 patroni_consul_service_check_interval: 5s
 patroni_consul_consistency: default
+
+# walg
+patroni_walg_install: true
+patroni_walg_version: 0.2.15
+patroni_walg_path: /opt/wal-g
+patroni_walg_s3_endpoint: https://my.s3.com
+patroni_walg_s3_prefix: s3://pg_backup
+patroni_walg_s3_key: ''
+patroni_walg_s3_secret: ''
+patroni_walg_pgdata: "{{ postgresql_data }}"
+patroni_walg_cron: false
+
+# restart
+patroni_restart: false

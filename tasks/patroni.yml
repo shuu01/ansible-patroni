@@ -5,7 +5,6 @@
     state: latest
     install_recommends: no
     force_apt_get: yes
-  tags: patroni
 
 #- name: patroni checkout
   #git:
@@ -18,27 +17,27 @@
     name:
     - patroni[{{ patroni_dcs }}]
     - psycopg2
-  tags: patroni
+    state: latest
+  notify: patroni restart
 
 - name: patroni | create /etc/patroni
   file:
     state: directory
     dest: /etc/patroni
-  tags: patroni
 
 - name: patroni | create config
   template:
     src: patroni.yml.j2
     dest: /etc/patroni/patroni.yml
     backup: yes
-  tags: patroni
+  notify: patroni restart
 
 - name: patroni | create patroni.service systemd unit
   template:
     src: patroni.service.j2
     dest: /etc/systemd/system/patroni.service
     backup: yes
-  tags: patroni
+  notify: patroni restart
 
 - name: patroni | restart
   systemd:
@@ -46,4 +45,4 @@
     state: restarted
     enabled: yes
     daemon_reload: yes
-  tags: patroni
+  when: patroni_restart
